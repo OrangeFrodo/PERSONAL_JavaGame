@@ -13,7 +13,10 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
 public class Window {
+    private float r, g, b, a;
     private int width, height;
+
+    private boolean fadeToBlack = false;
     private String title;
     private long glfwWindow;
     private static Window window = null;
@@ -22,6 +25,10 @@ public class Window {
         this.width = 1920;
         this.height = 1080;
         this.title = "Mario";
+        r = 1;
+        b = 1;
+        g = 1;
+        a = 1;
     }
 
     public static Window get(){
@@ -68,6 +75,7 @@ public class Window {
         glfwSetCursorPosCallback(glfwWindow, MouseListener::mousePosCallback);
         glfwSetMouseButtonCallback(glfwWindow, MouseListener::mouseButtonCallback);
         glfwSetScrollCallback(glfwWindow, MouseListener::mouseScrollCallback);
+        glfwSetKeyCallback(glfwWindow, KeyListener::keyCallback);
 
         // Make OpenGL contet current
         glfwMakeContextCurrent(glfwWindow);
@@ -86,8 +94,18 @@ public class Window {
             //Poll events
             glfwPollEvents();
 
-            glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+            glClearColor(r, g, b, a);
             glClear(GL_COLOR_BUFFER_BIT);
+
+            if(fadeToBlack) {
+                r = Math.max(r - 0.01f, 0);
+                g = Math.max(g - 0.01f, 0);
+                b = Math.max(b - 0.01f, 0);
+            }
+
+            if(KeyListener.isKeyPressed(GLFW_KEY_SPACE)){
+                fadeToBlack = true;
+            }
 
             glfwSwapBuffers(glfwWindow);
         }

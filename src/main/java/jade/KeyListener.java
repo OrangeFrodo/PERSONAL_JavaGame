@@ -28,4 +28,8 @@ public class KeyListener {
             get().keyPressed[key] = false;
         }
     }
+
+    public static boolean isKeyPressed(int keyCode) {
+        return get().keyPressed[keyCode];
+    }
 }
